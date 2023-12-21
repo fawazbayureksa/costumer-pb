@@ -1,0 +1,36 @@
+importScripts("https://www.gstatic.com/firebasejs/9.12.1/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/9.12.1/firebase-messaging-compat.js");
+
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCHX87hHOpTUwv0axWjhjcquhBXptQFDhE",
+    authDomain: "tokodapurpagebuilder.firebaseapp.com",
+    projectId: "tokodapurpagebuilder",
+    storageBucket: "tokodapurpagebuilder.appspot.com",
+    messagingSenderId: "828046531336",
+    appId: "1:828046531336:web:a8efd246a5e04ce4382abd",
+    measurementId: "G-CM1CRE34YX"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage(function(payload) {
+  const promiseChain = clients
+      .matchAll({
+          type: "window",
+          includeUncontrolled: true
+      })
+      .then(windowClients => {
+          for (let i = 0; i < windowClients.length; i++) {
+              const windowClient = windowClients[i];
+              windowClient.postMessage(payload);
+          }
+      })
+      .then(() => {
+          return registration.showNotification(payload.data.title);
+      });
+  return promiseChain;
+});
